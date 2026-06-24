@@ -6,13 +6,13 @@
       </template>
       <a-form @finish="handleSubmit" :model="form" name="loginForm">
         <a-form-item
-          name="phone"
-          :rules="[{ required: true, message: '请输入手机号', pattern: /^1[3-9]\d{9}$/, trigger: 'blur' }]"
+            name="phone"
+            :rules="[{ required: true, message: '请输入手机号', pattern: /^1[3-9]\d{9}$/, trigger: 'blur' }]"
         >
           <a-input
-            v-model:value="form.phone"
-            placeholder="手机号"
-            size="large"
+              v-model:value="form.phone"
+              placeholder="手机号"
+              size="large"
           >
             <template #prefix>
               <UserOutlined />
@@ -21,13 +21,13 @@
         </a-form-item>
 
         <a-form-item
-          name="password"
-          :rules="[{ required: true, message: '请输入密码', min: 6, trigger: 'blur' }]"
+            name="password"
+            :rules="[{ required: true, message: '请输入密码', min: 6, trigger: 'blur' }]"
         >
           <a-input-password
-            v-model:value="form.password"
-            placeholder="密码"
-            size="large"
+              v-model:value="form.password"
+              placeholder="密码"
+              size="large"
           >
             <template #prefix>
               <LockOutlined />
@@ -37,16 +37,16 @@
 
         <a-form-item>
           <a-button
-            type="primary"
-            html-type="submit"
-            block
-            size="large"
-            :loading="loading"
+              type="primary"
+              html-type="submit"
+              block
+              size="large"
+              :loading="loading"
           >
             登录
           </a-button>
         </a-form-item>
-        
+
         <div class="login-tips">
           <p>账号: 13800138000 | 密码: 123456</p>
         </div>
@@ -77,7 +77,7 @@ const handleSubmit = async (values) => {
       phone: values.phone,
       password: values.password
     })
-    
+
     if (response.data) {
       userStore.setUser('student', values.phone)
       router.push('/student')
