@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.learn.backend.mapper.MessageMapper">
+    <insert id="insertMassage">
+        INSERT INTO message (mid, cid, mtitle, mcontent, mpublish, mnum)
+        VALUES (#{mid}, #{cid}, #{mtitle}, #{mcontent}, #{mpublish}, #{mnum})
+    </insert>
+
+    <insert id="insertSM">
+        INSERT INTO sm (rid, sid, mid, isread)
+        VALUES (#{rid}, #{sid}, #{mid}, #{isread})
+    </insert>
+
+    <select id="getMassageListForStudent" resultType="map">
+        SELECT mid, cid, mtitle, mcontent, mpublish
+        FROM message
+        WHERE (mnum = -1 OR mid IN (
+            SELECT mid FROM sm WHERE sid = (SELECT sid FROM student WHERE sphone = #{sphone}) AND isread = 0
+        )) AND cid = #{cid}
+        ORDER BY mpublish DESC
+    </select>
+
+    <select id="getMessageListForTeacher" resultType="map">
+        SELECT mid, cid, mtitle, mcontent, mpublish
+        FROM message WHERE mnum = -1 AND cid = #{cid}
+        ORDER BY mpublish DESC
+    </select>
+</mapper>

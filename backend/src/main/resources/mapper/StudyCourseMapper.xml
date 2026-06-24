@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.learn.backend.mapper.StudyCourseMapper">
+    <resultMap id="StudyCourseResultMap" type="com.learn.backend.entity.StudyCourse">
+        <constructor>
+            <arg column="scid" javaType="java.lang.String"/>
+            <arg column="sid" javaType="java.lang.String"/>
+            <arg column="cid" javaType="java.lang.String"/>
+            <arg column="grade" javaType="java.lang.String"/>
+            <arg column="sarchive" javaType="java.lang.Integer"/>
+            <arg column="sort" javaType="java.lang.Integer"/>
+        </constructor>
+    </resultMap>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="scid">
+        INSERT INTO sc (scid, cid, sid, grade, sarchive, sort)
+        VALUES (#{scid}, #{cid}, #{sid}, #{grade}, #{sarchive}, #{sort})
+    </insert>
+
+    <delete id="delete">
+        DELETE FROM sc WHERE scid = #{scid}
+    </delete>
+
+    <update id="archiveCourse">
+        UPDATE sc SET sarchive = #{archive} WHERE scid = #{scId}
+    </update>
+
+    <select id="findById" resultMap="StudyCourseResultMap">
+        SELECT * FROM sc WHERE scid = #{scid}
+    </select>
+
+    <select id="findByCondition" resultMap="StudyCourseResultMap">
+        SELECT * FROM sc WHERE cid = #{cid} AND sid = #{sid}
+    </select>
+
+    <select id="getCourseByStudent" resultType="java.util.HashMap">
+        SELECT course.cid, sc.scid, course.cname, course.invite, course.cdate, course.tid, teacher.tname, teacher.tphone
+        FROM sc
+        LEFT JOIN course ON sc.cid = course.cid
+        LEFT JOIN teacher ON course.tid = teacher.tid
+        WHERE sc.sid = #{sid} AND sc.sarchive = 0 AND course.archive = 0
+        ORDER BY sc.sort
+    </select>
+
+    <select id="selectArchiveCourse" resultType="java.util.HashMap">
+        SELECT sc.scid, sc.sid, course.cname, course.cid
+        FROM sc
+        LEFT JOIN course ON course.cid = sc.cid
+        WHERE sc.sid = #{sid} AND sc.sarchive = 1 AND sc.cid IN (SELECT cid FROM course WHERE archive = 0)
+    </select>
+
+    <select id="sizeBySid" resultType="java.util.HashMap">
+        SELECT MAX(sort) AS countCourse FROM sc WHERE sid = #{sid}
+    </select>
+</mapper>

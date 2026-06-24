@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.learn.backend.mapper.TworkMapper">
+    <resultMap id="TworkResultMap" type="com.learn.backend.entity.Twork">
+        <constructor>
+            <arg column="twid" javaType="java.lang.String"/>
+            <arg column="tid" javaType="java.lang.String"/>
+            <arg column="cid" javaType="java.lang.String"/>
+            <arg column="wtitle" javaType="java.lang.String"/>
+            <arg column="tcontent" javaType="java.lang.String"/>
+            <arg column="tpublish" javaType="java.lang.String"/>
+            <arg column="deadline" javaType="java.lang.String"/>
+            <arg column="scale" javaType="java.lang.String"/>
+        </constructor>
+    </resultMap>
+
+    <insert id="insert">
+        INSERT INTO twork (twid, tid, cid, wtitle, tcontent, tpublish, deadline, scale)
+        VALUES (#{twid}, #{tid}, #{cid}, #{wtitle}, #{tcontent}, #{tpublish}, #{deadline}, #{scale})
+    </insert>
+
+    <update id="update">
+        UPDATE twork
+        SET wtitle = #{wtitle}, tcontent = #{tcontent}, tpublish = #{tpublish}, deadline = #{deadline}, scale = #{scale}
+        WHERE twid = #{twid}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM twork WHERE twid = #{twid}
+    </delete>
+
+    <select id="findWorksByCourseId" resultType="map">
+        SELECT twid, tid, cid, wtitle, tcontent, tpublish, deadline, scale
+        FROM twork WHERE cid = #{cid} ORDER BY tpublish DESC
+    </select>
+
+    <select id="findWorkByTwid" resultType="map">
+        SELECT twid, tid, cid, wtitle, tcontent, tpublish, deadline, scale
+        FROM twork WHERE twid = #{twid}
+    </select>
+
+    <select id="findWorksForStudent" resultType="map">
+        SELECT swid, scontent, correct, score, correction, tw.twid, tid, cid, wtitle, tcontent, tpublish, deadline, scale
+        FROM (
+            SELECT twid, tid, cid, wtitle, tcontent, tpublish, deadline, scale
+            FROM twork WHERE cid = #{cid}
+        ) AS tw
+        LEFT JOIN (
+            SELECT * FROM swork WHERE sid = (SELECT sid FROM student WHERE sphone = #{sid})
+        ) AS sw ON tw.twid = sw.twid
+    </select>
+
+    <select id="getWorkList" resultType="map">
+        SELECT twid, wtitle FROM twork WHERE cid = #{cid}
+    </select>
+
+    <select id="getLastWork" resultType="map">
+        SELECT wtitle FROM twork WHERE cid = #{cid} ORDER BY tpublish LIMIT 1
+    </select>
+</mapper>

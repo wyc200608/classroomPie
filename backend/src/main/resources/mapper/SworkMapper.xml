@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.learn.backend.mapper.SworkMapper">
+    <resultMap id="SworkResultMap" type="com.learn.backend.entity.Swork">
+        <constructor>
+            <arg column="swid" javaType="java.lang.String"/>
+            <arg column="twid" javaType="java.lang.String"/>
+            <arg column="sid" javaType="java.lang.String"/>
+            <arg column="scontent" javaType="java.lang.String"/>
+            <arg column="spublish" javaType="java.lang.String"/>
+            <arg column="correct" javaType="java.lang.String"/>
+            <arg column="score" javaType="java.lang.String"/>
+            <arg column="correction" javaType="java.lang.String"/>
+        </constructor>
+    </resultMap>
+
+    <insert id="insert">
+        INSERT INTO swork (swid, twid, sid, scontent, spublish, correct, score, correction)
+        VALUES (#{swid}, #{twid}, #{sid}, #{scontent}, #{spublish}, #{correct}, #{score}, #{correction})
+    </insert>
+
+    <update id="updateCorrection">
+        UPDATE swork SET correction = #{correction}, correct = 1 WHERE swid = #{swid}
+    </update>
+
+    <update id="updateScore">
+        UPDATE swork SET score = #{score} WHERE swid = #{swid}
+    </update>
+
+    <update id="updateSContent">
+        UPDATE swork SET scontent = #{scontent} WHERE swid = #{swid}
+    </update>
+
+    <delete id="deleteByTwid">
+        DELETE FROM swork WHERE twid = #{twid}
+    </delete>
+
+    <select id="getNeedCorrect" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM swork WHERE twid = #{twid} AND correct = 0
+    </select>
+
+    <select id="getCorrected" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM swork WHERE twid = #{twid} AND correct = 1
+    </select>
+
+    <select id="getLock" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM (
+            SELECT twid, sid FROM twork, sc WHERE twork.cid = sc.cid AND twid = #{twid}
+        ) AS cw
+        LEFT JOIN swork ON cw.sid = swork.sid AND swork.twid = #{twid}
+        WHERE swid IS NULL
+    </select>
+
+    <select id="getSubmit" resultType="map">
+        SELECT swid, twid, ssc.sid, snum, sname, scontent, spublish, correct, score, correction
+        FROM (
+            SELECT student.sid, student.sname, student.snum
+            FROM student, sc
+            WHERE student.sid = sc.sid AND sc.cid = (SELECT cid FROM twork WHERE twid = #{twid})
+        ) AS ssc
+        LEFT JOIN swork ON ssc.sid = swork.sid AND twid = #{twid}
+        WHERE spublish IS NOT NULL
+    </select>
+
+    <select id="getNoSubmit" resultType="map">
+        SELECT swid, twid, ssc.sid, snum, sname, scontent, spublish, correct, score, correction
+        FROM (
+            SELECT student.sid, student.sname, student.snum
+            FROM student, sc
+            WHERE student.sid = sc.sid AND sc.cid = (SELECT cid FROM twork WHERE twid = #{twid})
+        ) AS ssc
+        LEFT JOIN swork ON ssc.sid = swork.sid AND twid = #{twid}
+        WHERE spublish IS NULL
+    </select>
+</mapper>

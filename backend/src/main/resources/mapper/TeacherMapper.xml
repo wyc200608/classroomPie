@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.learn.backend.mapper.TeacherMapper">
+    <resultMap id="TeacherResultMap" type="com.learn.backend.entity.Teacher">
+        <constructor>
+            <arg column="tid" javaType="java.lang.String"/>
+            <arg column="tphone" javaType="java.lang.String"/>
+            <arg column="temail" javaType="java.lang.String"/>
+            <arg column="tpassword" javaType="java.lang.String"/>
+            <arg column="tname" javaType="java.lang.String"/>
+            <arg column="tcollege" javaType="java.lang.String"/>
+            <arg column="timage" javaType="java.lang.String"/>
+        </constructor>
+    </resultMap>
+
+    <update id="update">
+        UPDATE teacher
+        SET tphone = #{tphone},
+            tpassword = #{tpassword},
+            temail = #{temail},
+            tname = #{tname},
+            tcollege = #{tcollege},
+            timage = #{timage}
+        WHERE tid = #{tid}
+    </update>
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="tid">
+        INSERT INTO teacher (tid, tphone, tpassword, temail, tname, tcollege)
+        VALUES (#{tid}, #{tphone}, #{tpassword}, #{temail}, #{tname}, #{tcollege})
+    </insert>
+
+    <select id="findByPhone" resultMap="TeacherResultMap">
+        SELECT * FROM teacher WHERE tphone = #{phone}
+    </select>
+</mapper>

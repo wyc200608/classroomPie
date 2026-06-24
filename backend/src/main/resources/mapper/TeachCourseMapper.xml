@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.learn.backend.mapper.TeachCourseMapper">
+    <resultMap id="TeachCourseResultMap" type="com.learn.backend.entity.TeachCourse">
+        <constructor>
+            <arg column="tcid" javaType="java.lang.String"/>
+            <arg column="tid" javaType="java.lang.String"/>
+            <arg column="cid" javaType="java.lang.String"/>
+            <arg column="tarchive" javaType="java.lang.Integer"/>
+            <arg column="job" javaType="java.lang.Integer"/>
+            <arg column="tsort" javaType="java.lang.Integer"/>
+        </constructor>
+    </resultMap>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="tcid">
+        INSERT INTO tc (tcid, cid, tid, tarchive, job, tsort)
+        VALUES (#{tcid}, #{cid}, #{tid}, #{tarchive}, #{job}, #{tsort})
+    </insert>
+
+    <update id="updateArchive">
+        UPDATE tc SET tarchive = #{archive} WHERE tcid = #{tcid}
+    </update>
+
+    <select id="findById" resultMap="TeachCourseResultMap">
+        SELECT * FROM tc WHERE tcid = #{tcid}
+    </select>
+
+    <select id="findByCondition" resultMap="TeachCourseResultMap">
+        SELECT * FROM tc WHERE cid = #{cid} AND tid = #{tid}
+    </select>
+
+    <select id="selectArchiveCourse" resultType="java.util.HashMap">
+        SELECT tc.tcid, tc.tid, course.cname, course.cid
+        FROM tc
+        LEFT JOIN course ON course.cid = tc.cid
+        WHERE tc.tid = #{tid} AND (tc.tarchive = 1 OR tc.cid IN (SELECT cid FROM course WHERE archive = 1))
+    </select>
+
+    <select id="sizeByTid" resultType="java.util.HashMap">
+        SELECT MAX(tsort) AS countCourse FROM tc WHERE tid = #{tid}
+    </select>
+</mapper>

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.learn.backend.mapper.CourseMapper">
+    <resultMap id="CourseResultMap" type="com.learn.backend.entity.Course">
+        <constructor>
+            <arg column="cid" javaType="java.lang.String"/>
+            <arg column="tid" javaType="java.lang.String"/>
+            <arg column="cname" javaType="java.lang.String"/>
+            <arg column="cdate" javaType="java.lang.String"/>
+            <arg column="cnum" javaType="java.lang.Integer"/>
+            <arg column="invite" javaType="java.lang.String"/>
+            <arg column="archive" javaType="java.lang.Integer"/>
+        </constructor>
+    </resultMap>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="cid">
+        INSERT INTO course (cid, tid, cname, cdate, cnum, invite, archive)
+        VALUES (#{cid}, #{tid}, #{cname}, #{cdate}, #{cnum}, #{invite}, #{archive})
+    </insert>
+
+    <update id="update">
+        UPDATE course
+        SET cname = #{cname}, cdate = #{cdate}
+        WHERE cid = #{cid}
+    </update>
+
+    <update id="updateCourse">
+        UPDATE course SET cname = #{cname}, cdate = #{cdate} WHERE cid = #{cid}
+    </update>
+
+    <update id="deleteCourse">
+        UPDATE course SET archive = 2 WHERE cid = #{cid}
+    </update>
+
+    <update id="archiveCourse">
+        UPDATE course SET archive = #{archive} WHERE cid = #{cid}
+    </update>
+
+    <update id="updateNameById">
+        UPDATE course SET cname = #{name} WHERE cid = #{id}
+    </update>
+
+    <update id="coursePeopleAdd">
+        UPDATE course SET cnum = cnum + 1 WHERE cid = #{cid}
+    </update>
+
+    <update id="coursePeopleDel">
+        UPDATE course SET cnum = cnum - 1 WHERE cid = #{cid}
+    </update>
+
+    <select id="findById" resultMap="CourseResultMap">
+        SELECT * FROM course WHERE cid = #{cid}
+    </select>
+
+    <select id="findByInvite" resultMap="CourseResultMap">
+        SELECT * FROM course WHERE invite = #{invite}
+    </select>
+
+    <select id="getCourseByTeacher" resultType="java.util.HashMap">
+        SELECT course.cid, tc.tcid, course.cname, course.invite, course.cdate, course.tid, teacher.tname, teacher.tphone
+        FROM tc
+        LEFT JOIN course ON tc.cid = course.cid
+        LEFT JOIN teacher ON course.tid = teacher.tid
+        WHERE tc.tid = #{tid} AND tc.tarchive = 0 AND course.archive = 0
+        ORDER BY tc.tsort
+    </select>
+
+    <select id="getCourseByStudent" resultType="java.util.HashMap">
+        SELECT course.cid, sc.scid, course.cname, course.invite, course.cdate, course.tid, teacher.tname, teacher.tphone
+        FROM sc
+        LEFT JOIN course ON sc.cid = course.cid
+        LEFT JOIN teacher ON course.tid = teacher.tid
+        WHERE sc.sid = #{sid} AND sc.sarchive = 0 AND course.archive = 0
+        ORDER BY sc.sort
+    </select>
+
+    <select id="selectCourseTeacher" resultType="java.util.HashMap">
+        SELECT teacher.timage AS image, teacher.tname, teacher.tid, teacher.tphone, tc.job
+        FROM tc
+        LEFT JOIN teacher ON teacher.tid = tc.tid
+        WHERE tc.cid = #{cid}
+    </select>
+
+    <select id="selectCourseSelect" resultType="java.util.HashMap">
+        SELECT student.simage AS image, student.sname, student.sid, student.semail, student.snum, sc.scid
+        FROM sc
+        LEFT JOIN student ON student.sid = sc.sid
+        WHERE sc.cid = #{cid}
+    </select>
+
+    <select id="selectCourseGrade" resultType="java.util.HashMap">
+        SELECT student.sid, student.sname, student.snum, ts.allsum
+        FROM student, sc
+        LEFT JOIN (
+            SELECT swork.sid, SUM(twork.scale * swork.score) AS allsum
+            FROM twork, swork
+            WHERE twork.cid = #{cid} AND twork.twid = swork.twid
+            GROUP BY swork.sid, twork.scale, swork.score
+        ) AS ts ON sc.sid = ts.sid
+        WHERE sc.cid = #{cid} AND student.sid = sc.sid
+    </select>
+</mapper>
