@@ -3,6 +3,6 @@ POST http://localhost:8080/api/student/login
 Content-Type: application/json
 
 {
-  "username": "你的学生账号",
-  "password": "你的登录密码"
+  "phone": "13800138000",
+  "password": "123456"
 }
