@@ -116,6 +116,10 @@ public class CourseController {
         return Result.success(courseService.getCourseStudent(String.valueOf(info.get("cid"))));
     }
 
+    @PostMapping("/getStudents")
+    public Result<List<Map<String, Object>>> getStudents(@RequestBody Map<String, Object> info) {
+        return getCourseStudent(info);
+    }
     @PostMapping("/getCourseGrade")
     public Result<List<Map<String, Object>>> getCourseGrade(@RequestBody Map<String, Object> info) {
         return Result.success(courseService.getCourseGrade(String.valueOf(info.get("cid"))));
@@ -128,6 +132,10 @@ public class CourseController {
         return course != null ? Result.success(course) : Result.failed("课程不存在");
     }
 
+    @PostMapping("/getCourse")
+    public Result<Course> getCourse(@RequestBody Map<String, Object> info) {
+        return getOneCourse(info);
+    }
     @PostMapping("/updateNameById")
     public Result<Void> updateNameById(@RequestBody Map<String, Object> info) {
         int result = courseService.updateNameById(String.valueOf(info.get("id")), String.valueOf(info.get("name")));

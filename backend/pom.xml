@@ -18,6 +18,7 @@
 
     <properties>
         <java.version>23</java.version>
+        <maven.compiler.release>${java.version}</maven.compiler.release>
         <mybatis-spring-boot.version>3.0.5</mybatis-spring-boot.version>
     </properties>
 

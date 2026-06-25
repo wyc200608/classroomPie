@@ -42,12 +42,20 @@ public class StudentController {
         return Result.success(student);
     }
 
+    @PostMapping("/getStudent")
+    public Result<Student> getStudent(@RequestBody Map<String, String> params) {
+        return getInfo(params);
+    }
     @PostMapping("/update")
     public Result<Void> update(@RequestBody Student student) {
         studentService.update(student);
         return Result.success();
     }
 
+    @PostMapping("/updateStudent")
+    public Result<Void> updateStudent(@RequestBody Student student) {
+        return update(student);
+    }
     @PostMapping("/register")
     public Result<Void> register(@RequestBody Student student) {
         studentService.register(student);

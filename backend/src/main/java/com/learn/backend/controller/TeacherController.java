@@ -42,12 +42,20 @@ public class TeacherController {
         return Result.success(teacher);
     }
 
+    @PostMapping("/getTeacher")
+    public Result<Teacher> getTeacher(@RequestBody Map<String, String> params) {
+        return getInfo(params);
+    }
     @PostMapping("/update")
     public Result<Void> update(@RequestBody Teacher teacher) {
         teacherService.update(teacher);
         return Result.success();
     }
 
+    @PostMapping("/updateTeacher")
+    public Result<Void> updateTeacher(@RequestBody Teacher teacher) {
+        return update(teacher);
+    }
     @PostMapping("/register")
     public Result<Void> register(@RequestBody Teacher teacher) {
         teacherService.register(teacher);
