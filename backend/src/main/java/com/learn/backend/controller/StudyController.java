@@ -15,7 +15,7 @@ import java.util.logging.Logger;
  * 学习课程 Controller (学生-课程关联)
  */
 @RestController
-@RequestMapping("/sc")
+@RequestMapping("/api/sc")
 public class StudyController {
 
     private static final Logger log = Logger.getLogger(StudyController.class.getName());

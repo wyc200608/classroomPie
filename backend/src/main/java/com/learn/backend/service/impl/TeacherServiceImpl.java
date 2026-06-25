@@ -37,8 +37,7 @@ public class TeacherServiceImpl implements TeacherService {
         if (teacher == null) {
             throw new BusinessException(ResultCode.USER_NOT_FOUND);
         }
-        String encryptedPassword = MD5Util.encrypt(password);
-        if (!encryptedPassword.equals(teacher.tpassword())) {
+        if (!password.equals(teacher.tpassword())) {
             throw new BusinessException(ResultCode.PASSWORD_ERROR);
         }
         log.info("教师登录成功: " + phone);

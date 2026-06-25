@@ -18,7 +18,7 @@ import java.util.logging.Logger;
  * 课程 Controller
  */
 @RestController
-@RequestMapping("/course")
+@RequestMapping("/api/course")
 public class CourseController {
 
     private static final Logger log = Logger.getLogger(CourseController.class.getName());

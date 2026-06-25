@@ -37,11 +37,26 @@ public class StudentServiceImpl implements StudentService {
         if (student == null) {
             throw new BusinessException(ResultCode.USER_NOT_FOUND);
         }
-        String encryptedPassword = MD5Util.encrypt(password);
-        if (!encryptedPassword.equals(student.spassword())) {
-            throw new BusinessException(ResultCode.PASSWORD_ERROR);
+
+        String storedPassword = student.spassword();
+        String encryptedInput = MD5Util.encrypt(password);
+
+        // 支持 MD5 加密密码匹配
+        if (encryptedInput.equals(storedPassword)) {
+            log.info("学生登录成功(MD5): " + phone);
+            return buildLoginResponse(student);
         }
-        log.info("学生登录成功: " + phone);
+
+        // 兼容旧数据：支持明文密码匹配
+        if (password.equals(storedPassword)) {
+            log.info("学生登录成功(明文): " + phone);
+            return buildLoginResponse(student);
+        }
+
+        throw new BusinessException(ResultCode.PASSWORD_ERROR);
+    }
+
+    private LoginResponse buildLoginResponse(Student student) {
         return new LoginResponse(
             student.sid(),
             student.sname(),

@@ -12,7 +12,7 @@ import java.util.logging.Logger;
  * 消息 Controller
  */
 @RestController
-@RequestMapping("/message")
+@RequestMapping("/api/message")
 public class MessageController {
 
     private static final Logger log = Logger.getLogger(MessageController.class.getName());

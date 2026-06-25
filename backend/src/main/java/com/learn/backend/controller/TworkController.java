@@ -14,7 +14,7 @@ import java.util.logging.Logger;
  * 教师作业 Controller
  */
 @RestController
-@RequestMapping("/twork")
+@RequestMapping("/api/twork")
 public class TworkController {
 
     private static final Logger log = Logger.getLogger(TworkController.class.getName());
